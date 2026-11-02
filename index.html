@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warung Nusantara — Cita Rasa Sunda & Jawa Tengah</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:  { DEFAULT: '#1d4ed8', light: '#3b82f6', dark: '#1e3a8a' },
+            accent:   { DEFAULT: '#f97316', dark: '#ea580c' },
+            surface:  '#f8fafc',
+          },
+          fontFamily: { sans: ['"Segoe UI"', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-surface font-sans text-gray-800 min-h-screen">
+
+  <!-- ══════════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════════ -->
+  <header class="bg-primary-dark shadow-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🍛</span>
+        <div>
+          <h1 class="text-white font-bold text-lg leading-tight">Warung Nusantara</h1>
+          <p class="text-blue-200 text-xs">Cita Rasa Sunda & Jawa Tengah</p>
+        </div>
+      </div>
+      <!-- Right actions -->
+      <div class="flex items-center gap-2">
+        <!-- Gacha button -->
+        <button id="btn-open-gacha"
+          class="hidden sm:flex items-center gap-1.5 bg-accent hover:bg-accent-dark text-white text-sm font-semibold px-3 py-1.5 rounded-full transition-all duration-200 shadow">
+          🎰 Gacha Menu
+        </button>
+        <!-- Cart button -->
+        <button id="btn-open-cart"
+          class="relative bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17
+                 m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span id="cart-badge"
+            class="hidden absolute -top-1 -right-1 bg-accent text-white text-[10px] font-bold
+                   w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <nav class="max-w-7xl mx-auto px-4 flex gap-1 pb-0">
+      <button data-tab="menu"
+        class="tab-btn active-tab px-4 py-2 text-sm font-semibold rounded-t-lg transition-all">
+        📋 Menu
+      </button>
+      <button data-tab="orders"
+        class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg transition-all">
+        📦 Pesanan
+      </button>
+      <!-- Mobile gacha -->
+      <button id="btn-open-gacha-mobile" data-tab=""
+        class="sm:hidden ml-auto px-4 py-2 text-sm font-semibold text-accent rounded-t-lg transition-all">
+        🎰 Gacha
+      </button>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════ -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- ─── TAB: MENU ─── -->
+    <section id="tab-menu" class="tab-content">
+      <!-- Toolbar -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-5">
+        <!-- Search -->
+        <div class="relative flex-1">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+          <input id="search-input" type="text" placeholder="Cari nama menu..."
+            class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl bg-white shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
+        </div>
+        <!-- Add menu button -->
+        <button id="btn-add-menu"
+          class="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white
+                 font-semibold px-4 py-2 rounded-xl transition-all shadow-sm text-sm whitespace-nowrap">
+          ＋ Tambah Menu
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-2 mb-5">
+        <div class="flex gap-1 flex-wrap">
+          <span class="text-xs text-gray-500 self-center mr-1">Kategori:</span>
+          <button data-filter="category" data-value="all"
+            class="filter-btn active-filter px-3 py-1 rounded-full text-xs font-semibold border transition-all">Semua</button>
+          <button data-filter="category" data-value="Makanan"
+            class="filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🍽️ Makanan</button>
+          <button data-filter="category" data-value="Minuman"
+            class="filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🥤 Minuman</button>
+          <button data-filter="category" data-value="Dessert"
+            class="filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🍡 Dessert</button>
+        </div>
+        <div class="flex gap-1 flex-wrap">
+          <span class="text-xs text-gray-500 self-center mr-1">Daerah:</span>
+          <button data-filter="origin" data-value="all"
+            class="filter-btn active-filter px-3 py-1 rounded-full text-xs font-semibold border transition-all">Semua</button>
+          <button data-filter="origin" data-value="Sunda"
+            class="filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🌿 Sunda</button>
+          <button data-filter="origin" data-value="Jawa Tengah"
+            class="filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🏛️ Jawa Tengah</button>
+        </div>
+      </div>
+
+      <!-- Menu Grid -->
+      <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+    </section>
+
+    <!-- ─── TAB: ORDERS ─── -->
+    <section id="tab-orders" class="tab-content hidden">
+      <!-- Order filter -->
+      <div class="flex gap-2 flex-wrap mb-5">
+        <span class="text-xs text-gray-500 self-center">Status:</span>
+        <button data-order-filter="all"
+          class="order-filter-btn active-filter px-3 py-1 rounded-full text-xs font-semibold border transition-all">Semua</button>
+        <button data-order-filter="Menunggu"
+          class="order-filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">⏳ Menunggu</button>
+        <button data-order-filter="Diproses"
+          class="order-filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">🔄 Diproses</button>
+        <button data-order-filter="Selesai"
+          class="order-filter-btn px-3 py-1 rounded-full text-xs font-semibold border transition-all">✅ Selesai</button>
+      </div>
+      <div id="orders-list" class="space-y-4"></div>
+    </section>
+  </main>
+
+  <!-- ══════════════════════════════════════════════
+       CART DRAWER (right sidebar)
+  ══════════════════════════════════════════════ -->
+  <div id="cart-overlay" class="fixed inset-0 bg-black/40 z-50 hidden" aria-hidden="true"></div>
+  <aside id="cart-drawer"
+    class="fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-2xl z-50
+           transform translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- Header -->
+    <div class="bg-primary-dark text-white px-5 py-4 flex items-center justify-between">
+      <h2 class="font-bold text-lg">🛒 Keranjang</h2>
+      <button id="btn-close-cart" class="hover:text-blue-200 transition-colors">✕</button>
+    </div>
+    <!-- Cart items -->
+    <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+    <!-- Footer -->
+    <div class="border-t border-gray-200 p-4 space-y-3">
+      <div class="flex justify-between font-bold text-lg">
+        <span>Total</span>
+        <span id="cart-total" class="text-primary">Rp 0</span>
+      </div>
+      <button id="btn-checkout"
+        class="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 rounded-xl
+               transition-all shadow-md text-sm">
+        🧾 Checkout Sekarang
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: ADD / EDIT MENU
+  ══════════════════════════════════════════════ -->
+  <div id="menu-modal-overlay" class="modal-overlay fixed inset-0 bg-black/50 z-60 items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div class="bg-primary-dark text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+        <h2 id="menu-modal-title" class="font-bold text-lg">Tambah Menu Baru</h2>
+        <button id="btn-close-menu-modal" class="hover:text-blue-200 transition-colors text-xl">✕</button>
+      </div>
+      <form id="menu-form" class="p-6 space-y-4">
+        <input type="hidden" id="menu-id" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="form-label">Nama Menu *</label>
+            <input id="f-name" type="text" required class="form-input" placeholder="cth. Nasi Timbel" />
+          </div>
+          <div>
+            <label class="form-label">Kategori *</label>
+            <select id="f-category" required class="form-input">
+              <option value="">-- Pilih --</option>
+              <option value="Makanan">Makanan</option>
+              <option value="Minuman">Minuman</option>
+              <option value="Dessert">Dessert</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Asal Daerah *</label>
+            <select id="f-origin" required class="form-input">
+              <option value="">-- Pilih --</option>
+              <option value="Sunda">Sunda</option>
+              <option value="Jawa Tengah">Jawa Tengah</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Harga (Rp) *</label>
+            <input id="f-price" type="number" min="0" required class="form-input" placeholder="25000" />
+          </div>
+          <div>
+            <label class="form-label">Status</label>
+            <select id="f-available" class="form-input">
+              <option value="true">✅ Tersedia</option>
+              <option value="false">❌ Habis</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="form-label">Deskripsi Singkat</label>
+            <textarea id="f-description" rows="2" class="form-input resize-none"
+              placeholder="Deskripsi menu..."></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="form-label">URL Gambar (opsional)</label>
+            <input id="f-image" type="url" class="form-input" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="btn-cancel-menu-modal"
+            class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-xl hover:bg-gray-50 transition-all text-sm font-semibold">
+            Batal
+          </button>
+          <button type="submit"
+            class="flex-1 bg-primary hover:bg-primary-dark text-white py-2 rounded-xl transition-all text-sm font-semibold shadow">
+            Simpan Menu
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: DELETE CONFIRM
+  ══════════════════════════════════════════════ -->
+  <div id="delete-modal-overlay" class="modal-overlay fixed inset-0 bg-black/50 z-60 items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <div class="text-5xl mb-3">🗑️</div>
+      <h3 class="font-bold text-lg mb-2">Hapus Menu?</h3>
+      <p class="text-gray-500 text-sm mb-5">Tindakan ini tidak dapat dibatalkan.</p>
+      <div class="flex gap-3">
+        <button id="btn-cancel-delete"
+          class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-xl hover:bg-gray-50 transition-all text-sm font-semibold">
+          Batal
+        </button>
+        <button id="btn-confirm-delete"
+          class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-xl transition-all text-sm font-semibold shadow">
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: CHECKOUT
+  ══════════════════════════════════════════════ -->
+  <div id="checkout-modal-overlay" class="modal-overlay fixed inset-0 bg-black/50 z-60 items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="bg-primary-dark text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+        <h2 class="font-bold text-lg">🧾 Checkout</h2>
+        <button id="btn-close-checkout" class="hover:text-blue-200 transition-colors text-xl">✕</button>
+      </div>
+      <form id="checkout-form" class="p-6 space-y-4">
+        <div>
+          <label class="form-label">Nama Pemesan *</label>
+          <input id="co-name" type="text" required class="form-input" placeholder="cth. Budi Santoso" />
+        </div>
+        <div>
+          <label class="form-label">Nomor Meja *</label>
+          <input id="co-table" type="text" required class="form-input" placeholder="cth. Meja 5" />
+        </div>
+        <div>
+          <label class="form-label">Catatan (opsional)</label>
+          <textarea id="co-note" rows="2" class="form-input resize-none" placeholder="Tidak pedas, dll."></textarea>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 text-sm">
+          <div class="flex justify-between font-semibold text-base">
+            <span>Total Pesanan</span>
+            <span id="co-total" class="text-primary">Rp 0</span>
+          </div>
+        </div>
+        <div class="flex gap-3 pt-1">
+          <button type="button" id="btn-cancel-checkout"
+            class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-xl hover:bg-gray-50 transition-all text-sm font-semibold">
+            Batal
+          </button>
+          <button type="submit"
+            class="flex-1 bg-accent hover:bg-accent-dark text-white py-2 rounded-xl transition-all text-sm font-semibold shadow">
+            Konfirmasi Pesanan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL: GACHA
+  ══════════════════════════════════════════════ -->
+  <div id="gacha-modal-overlay" class="modal-overlay fixed inset-0 bg-black/50 z-60 items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-primary-dark to-primary text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+        <div>
+          <h2 class="font-bold text-xl">🎰 Gacha Menu</h2>
+          <p class="text-blue-200 text-xs">Kocok nasibmu hari ini!</p>
+        </div>
+        <button id="btn-close-gacha" class="hover:text-blue-200 transition-colors text-xl">✕</button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <!-- STEP 1: Input form -->
+        <div id="gacha-step-input">
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Budget Maksimal (Rp) *</label>
+              <input id="gacha-budget" type="number" min="1" class="form-input" placeholder="cth. 50000" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="form-label">Mode Gacha</label>
+                <select id="gacha-mode" class="form-input">
+                  <option value="single">Satu Menu Acak</option>
+                  <option value="package">Paket Lengkap</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Asal Daerah</label>
+                <select id="gacha-origin" class="form-input">
+                  <option value="all">Campur</option>
+                  <option value="Sunda">Sunda</option>
+                  <option value="Jawa Tengah">Jawa Tengah</option>
+                </select>
+              </div>
+            </div>
+            <!-- Dessert toggle (only visible for package mode) -->
+            <div id="gacha-dessert-wrap" class="hidden">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input id="gacha-dessert" type="checkbox" class="w-4 h-4 accent-primary" />
+                <span class="text-sm font-medium text-gray-700">Sertakan Dessert dalam paket</span>
+              </label>
+            </div>
+            <button id="btn-spin-gacha"
+              class="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 rounded-xl
+                     transition-all shadow-md text-base tracking-wide">
+              🎰 Putar Gacha!
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Animation -->
+        <div id="gacha-step-anim" class="hidden text-center py-6">
+          <div class="gacha-slot-container mx-auto mb-4">
+            <div class="gacha-slot-reel" id="gacha-reel"></div>
+          </div>
+          <p class="text-gray-500 text-sm animate-pulse">Mengocok menu pilihan...</p>
+        </div>
+
+        <!-- STEP 3: Result -->
+        <div id="gacha-step-result" class="hidden">
+          <div id="gacha-result-cards" class="grid grid-cols-2 gap-3 mb-5"></div>
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm space-y-1">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Total Harga</span>
+              <span id="gacha-res-total" class="font-bold text-primary">Rp 0</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Sisa Budget</span>
+              <span id="gacha-res-remaining" class="font-bold text-green-600">Rp 0</span>
+            </div>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button id="btn-gacha-again"
+              class="flex-1 border border-primary text-primary py-2 rounded-xl hover:bg-blue-50 transition-all text-sm font-semibold">
+              🔄 Gacha Ulang
+            </button>
+            <button id="btn-gacha-add-cart"
+              class="flex-1 bg-accent hover:bg-accent-dark text-white py-2 rounded-xl transition-all text-sm font-semibold shadow">
+              🛒 Tambah ke Keranjang
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Budget too low -->
+        <div id="gacha-step-nobudget" class="hidden text-center py-4">
+          <div class="text-4xl mb-3">😔</div>
+          <p class="font-semibold text-gray-800 mb-1">Budget terlalu kecil untuk pilihan gacha saat ini</p>
+          <p id="gacha-cheapest-info" class="text-sm text-gray-500 mb-5"></p>
+          <div class="flex gap-3">
+            <button id="btn-gacha-raise-budget"
+              class="flex-1 bg-primary hover:bg-primary-dark text-white py-2 rounded-xl transition-all text-sm font-semibold shadow">
+              💰 Naikkan Budget
+            </button>
+            <button id="btn-gacha-cancel"
+              class="flex-1 border border-gray-300 text-gray-600 py-2 rounded-xl hover:bg-gray-50 transition-all text-sm font-semibold">
+              Tidak, Terima Kasih
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
